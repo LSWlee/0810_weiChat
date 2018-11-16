@@ -17,6 +17,8 @@
   },
   "homepage": "https://github.com/LSWlee/0810_weiChat#readme",
   "dependencies": {
-    "express": "^4.16.4"
+    "express": "^4.16.4",
+    "sha1": "^1.1.1",
+    "xml2js": "^0.4.19"
   }
 }
