@@ -4,8 +4,10 @@
 const express = require('express');
 const sha1 = require('sha1');
 const {getUserDataAsync,parseXMLDataAsync,formatMessage} = require('./untils/tools');
+const replayMsg = require('./replay/replayMsg');
+const replay = require('./replay/replay');
 const app = express();
-//验证服务器有效性===============================
+//01验证服务器有效性===============================
 const config= {
   appID:'wx021e6eafc00cc0ff',
   appsecret:'a2d42914589fe5025ffb00936a455094',
@@ -36,10 +38,10 @@ console.log(arr);
    2.post  转发用户消息
    */
 if(req.method === 'GET'){
-//验证服务器有效性
+//01验证服务器有效性
   if(str === signature){
     //说明消息来自微信服务器，然后接收微信服务器发送的消息并作出响应
-    ree.send(echostr);
+    res.send(echostr);
   }else{
     //说明消息不是来自微信服务器
     res.send(err);
@@ -74,23 +76,10 @@ if(req.method === 'GET'){
 //格式化数据
   const mes = formatMessage(jsDate);
   console.log(mes);
-//根据用户输入指定字符，返回响应的响应
-  let replayDate = '你在说什么，我听不懂~~~';
-  if(mes.Content === '1'){
-    replayDate = '大吉大利，今晚吃鸡'
-  }else if(mes.Content === '1'){
-    replayDate = '大吉大利，今晚盒子精'
-  }else if(mes.Content.includes('爱')){
-    replayDate = '么么哒~~~';
-  }
-//返回xml消息给微信服务器
-let replayMessage =`<xml>
-      <ToUserName><![CDATA[${mes.FromUserName}]]></ToUserName>
-      <FromUserName><![CDATA[${mes.ToUserName}]]></FromUserName>
-      <CreateTime>${Date.now()}</CreateTime>
-      <MsgType><![CDATA[text]]></MsgType>
-      <Content><![CDATA[${replayDate}]]></Content>
-      </xml>`;
+
+  const options = replay(mes);
+  const replayMessage = replayMsg(options);
+
   res.send(replayMessage);
 }else{
   res.send('error');
