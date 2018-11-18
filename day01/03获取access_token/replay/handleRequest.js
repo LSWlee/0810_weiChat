@@ -17,7 +17,7 @@ module.exports = () => {
      * */
 //获取请求参数
     const {signature,echostr,timestamp,nonce} = req.query;
-    const {token} = config;
+    //const {token} = config;
 // - 将参数签名加密的三个参数（timestamp、nonce、token）组合在一起，按照字典序排序
     const arr = [timestamp,nonce,token].sort();
     console.log(arr);
@@ -78,4 +78,4 @@ module.exports = () => {
       res.send('error');
     }
   }
-}
+};
