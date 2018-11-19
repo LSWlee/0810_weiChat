@@ -20,7 +20,7 @@
 - 发送请求，获取access_token，保存下来*/
 
 const rp = require('request-promise-native');
-const {writeFile,readFile} = require('fs');
+const {writeFile,readFile,createReadStream} = require('fs');
 const {appID,appsecret} = require('../config');
 const api = require('../api');
 
@@ -227,16 +227,50 @@ class Wechat {
   async sendAllByTag (options) {
     try {
       //获取access_token
-      const {access_token} = await this.fetchAccessToken()
+      const {access_token} = await this.fetchAccessToken();
       //定义请求地址
-      const url = `${api.message.sendall}access_token=${access_token}`
+      const url = `${api.message.sendall}access_token=${access_token}`;
       //发送请求
       return await rp({method:'POST',url,json:true,body:options});
 
     } catch (e) {
       return 'sendAllByTag方法出了问题' + e;
     }
+  }
 
+  async uploadMaterial (type,material,body) {
+      try {
+        //获取access_token
+        const {access_token} = await this.fetchAccessToken();
+        //定义请求地址
+        let url ='';
+        let options = {method:'POST',json:true};
+        if(type === 'news' ){
+          url = `${api.upload.uploadimg}access_token=${access_token}`;
+          //以请求体参数上传
+          options.body = material;
+        }else if(type === 'pic') {
+          url = `${api.upload.uploadimg}access_token=${access_token}`;
+          //以form表单上传
+          options.formData = {
+            media: createReadStream(material)
+          }
+        }else{
+          url = `${api.upload.uploadimg}access_token=${access_token}&type=${type}`;
+          //以form表单上传，从request库中找方法
+          options.formData = {
+            media: createReadStream(material)
+          };
+          if (type === 'video') {
+            options.body = body;
+          }
+        }
+        options.url = url;
+        //发送请求
+        return await rp(options);
+      }catch(e) {
+        return 'uploadMaterial方法出了问题' + e;
+      }
   }
 }
 
@@ -254,16 +288,40 @@ class Wechat {
    - 发送请求，获取access_token，保存下来
    */
   const w = new Wechat();
+  //上传图片获取media_id
+  //  let result1 = await w.uploadMaterial('image', './er.jpg');
+  //  console.log(result1);
+  //
+  //  //上传图片获取地址
+  //  let result2 = await w.uploadMaterial('pic', './tp.jpg');
+  //  console.log(result2);
+  //
+  //  //上传图文消息
+  //  let result3 = await w.uploadMaterial('news', {
+  //  "articles": [{
+  //    "title": '微信公众号开发',
+  //    "thumb_media_id": result1.media_id,
+  //    "author": '佚名',
+  //    "digest": '这里是class0810开发的',
+  //    "show_cover_pic": 1,
+  //    "content": `<!DOCTYPE html>
+  //                 <html lang="en">
+  //                 <head>
+  //                   <meta charset="UTF-8">
+  //                   <title>Title</title>
+  //                 </head>
+  //                 <body>
+  //                   <h1>微信公众号开发</h1>
+  //                   <img src="${result2.url}">
+  //                 </body>
+  //                 </html>`,
+  //    "content_source_url": 'http://www.atguigu.com',
+  //    "need_open_comment":1,
+  //    "only_fans_can_comment":1
+  //  }
+  //  ]
+  //  });
+  //  console.log(result3);
 
-  let result1 = await w.sendAllByTag({
-    "filter":{
-      "is_to_all":false,
-      "tag_id":107
-    },
-    "text":{
-      "content":"惊天天气真晴朗~~~"
-    },
-    "msgtype":"text"
-  });
-  console.log(result1);
+
 })();
