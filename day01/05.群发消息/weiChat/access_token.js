@@ -131,7 +131,6 @@ class Wechat {
       })
   }
 
-
   /**
    * 创建自定义菜单
    * @param menu
@@ -219,7 +218,28 @@ class Wechat {
       return 'batchUsersTag方法出了问题' + e;
     }
   }
+
+  /**
+   * 给指定标签的人群发消息
+   * @param optios
+   * @returns {Promise.<*>}
+   */
+  async sendAllByTag (options) {
+    try {
+      //获取access_token
+      const {access_token} = await this.fetchAccessToken()
+      //定义请求地址
+      const url = `${api.message.sendall}access_token=${access_token}`
+      //发送请求
+      return await rp({method:'POST',url,json:true,body:options});
+
+    } catch (e) {
+      return 'sendAllByTag方法出了问题' + e;
+    }
+
+  }
 }
+
 
 
 //测试代码块
@@ -235,13 +255,15 @@ class Wechat {
    */
   const w = new Wechat();
 
-  let result1 = await w.createTag('class0812');
-  console.log(result1); // { tag: { id: 107, name: 'class0811' } }
-  let result2 = await w.batchUsersTag([
-    'odhy31OfUXvecq98whdZgMp-knhI'
-  ], result1.tag.id);
-  console.log(result2);//data: { openid: [ 'odhy31OfUXvecq98whdZgMp-knhI' ] },
-  let result3 = await w.getTagUsers(result1.tag.id);
-  console.log(result3);//next_openid: 'odhy31OfUXvecq98whdZgMp-knhI' }
-
+  let result1 = await w.sendAllByTag({
+    "filter":{
+      "is_to_all":false,
+      "tag_id":107
+    },
+    "text":{
+      "content":"惊天天气真晴朗~~~"
+    },
+    "msgtype":"text"
+  });
+  console.log(result1);
 })();

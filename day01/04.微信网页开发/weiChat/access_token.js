@@ -131,7 +131,6 @@ class Wechat {
       })
   }
 
-
   /**
    * 创建自定义菜单
    * @param menu
