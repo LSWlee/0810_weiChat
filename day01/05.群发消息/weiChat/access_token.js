@@ -262,8 +262,7 @@ class Wechat {
             media: createReadStream(material)
           };
           if (type === 'video') {
-            options.body = body;
-          }
+            options.body = body;          }
         }
         options.url = url;
         //发送请求
@@ -289,39 +288,40 @@ class Wechat {
    */
   const w = new Wechat();
   //上传图片获取media_id
-  //  let result1 = await w.uploadMaterial('image', './er.jpg');
-  //  console.log(result1);
-  //
-  //  //上传图片获取地址
-  //  let result2 = await w.uploadMaterial('pic', './tp.jpg');
-  //  console.log(result2);
-  //
-  //  //上传图文消息
-  //  let result3 = await w.uploadMaterial('news', {
-  //  "articles": [{
-  //    "title": '微信公众号开发',
-  //    "thumb_media_id": result1.media_id,
-  //    "author": '佚名',
-  //    "digest": '这里是class0810开发的',
-  //    "show_cover_pic": 1,
-  //    "content": `<!DOCTYPE html>
-  //                 <html lang="en">
-  //                 <head>
-  //                   <meta charset="UTF-8">
-  //                   <title>Title</title>
-  //                 </head>
-  //                 <body>
-  //                   <h1>微信公众号开发</h1>
-  //                   <img src="${result2.url}">
-  //                 </body>
-  //                 </html>`,
-  //    "content_source_url": 'http://www.atguigu.com',
-  //    "need_open_comment":1,
-  //    "only_fans_can_comment":1
-  //  }
-  //  ]
-  //  });
-  //  console.log(result3);
+   let result1 = await w.uploadMaterial('image', './er.jpg');
+   console.log(result1);
+//{ url: 'http://mmbiz.qpic.cn/mmbiz_jpg/mok2zxSlsr59AAbaqaq9Vr2Su5ia57aicJT1RCBNegYWFtz1ribHZXu6ajFs7AGhFqeGibL3gkxuPBay0w9C3ojMJA/0' }
+   //上传图片获取地址
+   let result2 = await w.uploadMaterial('pic', './tp.jpg');
+   console.log(result2);
+   //{ url: 'http://mmbiz.qpic.cn/mmbiz_jpg/mok2zxSlsr59AAbaqaq9Vr2Su5ia57aicJYjiaL1p3WcCF77Gz4lmEjx8Y5MK1yQ84atcOLKic5tDyTaKk7W0Grqlw/0' }
+
+   //上传图文消息
+   let result3 = await w.uploadMaterial('news', {
+   "articles": [{
+     "title": '微信公众号开发',
+     "thumb_media_id": result1.media_id,
+     "author": '佚名',
+     "digest": '这里是class0810开发的',
+     "show_cover_pic": 1,
+     "content": `<!DOCTYPE html>
+                  <html lang="en">
+                  <head>
+                    <meta charset="UTF-8">
+                    <title>Title</title>
+                  </head>
+                  <body>
+                    <h1>微信公众号开发</h1>
+                    <img src="${result2.url}">
+                  </body>
+                  </html>`,
+     "content_source_url": 'http://www.atguigu.com',
+     "need_open_comment":1,
+     "only_fans_can_comment":1
+   }
+   ]
+   });
+   console.log(result3);
 
 
 })();

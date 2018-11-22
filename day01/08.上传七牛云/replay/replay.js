@@ -2,8 +2,8 @@
  * Created by lsw on 2018/11/17 0017.
  */
   const {url} = require('../config')
-module.exports = (mes) => {
-  const options = {
+module.exports =async (mes) => {
+  let options = {
     ToUserName:mes.FromUserName,
     FromUserName:mes.ToUserName,
     CreateTime:Date.now(),
@@ -12,44 +12,63 @@ module.exports = (mes) => {
   //根据用户输入指定字符，返回响应的响应
   let replayDate = '你在说什么，我听不懂~~~';
   if(mes.MsgType === 'text'){
-    if(mes.Content === '1'){
-      replayDate = '大吉大利，今晚吃鸡'
-    }else if(mes.Content === '2'){
-      replayDate = '大吉大利，今晚盒子精'
-    }else if(mes.Content.includes('爱')){
-      replayDate = '么么哒~~~';
-    }else if(mes.Content === '3'){
-      //回复图文消息
+    if(mes.Content === '预告片'){
       options.MsgType = 'news';
-      options.title = '微信公众号开发~';
-      options.description = 'class0810~';
-      options.picUrl = 'https://ss1.baidu.com/6ONXsjip0QIZ8tyhnq/it/u=199783060,2774173244&fm=58&s=188FA15AB1206D1108400056000040F6&bpow=121&bpoh=75';
-      options.url = 'http://www.atguigu.com';
-    }else if(mes.Content === '4'){
-      replayDate = `<a href="${url}/search">secrch页面</a>`;
+      options.title = '硅谷电影预告片';
+      options.description = '这里有即将上映的电影~';
+      options.picUrl = 'http://mmbiz.qpic.cn/mmbiz_jpg/mok2zxSlsr59AAbaqaq9Vr2Su5ia57aicJT1RCBNegYWFtz1ribHZXu6ajFs7AGhFqeGibL3gkxuPBay0w9C3ojMJA/0';
+      options.url = `${url}/movie`;
+    }else if(mes.Content === '语音识别'){
+      options.MsgType = 'news';
+      options.title = '语音识别电影';
+      options.description = '这里用语音搜索你想看的电影~';
+      options.picUrl = 'http://mmbiz.qpic.cn/mmbiz_jpg/mok2zxSlsr59AAbaqaq9Vr2Su5ia57aicJT1RCBNegYWFtz1ribHZXu6ajFs7AGhFqeGibL3gkxuPBay0w9C3ojMJA/0';
+      options.url = `${url}/search`;
+    }else{
+      //搜索相关的电影
+      const url = `http://api.douban.com/v2/movie/search?`;
+      const {subjects} = await rp({method:'GET',url,json:true,qs:{count:1,q:mes.Content}})
+      options.MsgType = 'news';
+      options.title = subjects[0].title;
+      options.description = `评分：${subjects[0].rating.average}`;
+      options.picUrl =subjects[0].images.small;
+      options.url = subjects[0].alt;
     }
-  }else if(mes.MsgType === 'voice'){
-    replayDate = `语音识别结果为: ${mes.Recognition}`
-  }else if (mes.MsgType === 'location') {
-    //用户主动发送位置
-    replayDate = `纬度：${mes.Location_X}  经度：${mes.Location_Y} 地图的缩放大小：${mes.Scale} 位置详情：${mes.Label}`;
+  }
+    else if(mes.MsgType === 'voice'){
+    //搜索相关的电影
+    const url = `http://api.douban.com/v2/movie/search?`;
+    const {subjects} = await rp({method:'GET',url,json:true,qs:{count:1,q:mes.Recognition}});
+    options.MsgType = 'news';
+    options.title = subjects[0].title;
+    options.description = `评分：${subjects[0].rating.average}`;
+    options.picUrl =subjects[0].images.small;
+    options.url = subjects[0].alt;
+
   } else if (mes.MsgType === 'event') {
     if (mes.Event === 'subscribe') {
       //关注事件/订阅事件
-      replayDate = '欢迎您关注公众号~';
-      if (mes.EventKey) {
-        //说明扫了带参数的二维码
-        replayDate = '欢迎您关注公众号~, 扫了带参数的二维码';
-      }
+      content = `欢迎您关注硅谷电影公众号~ /n
+                回复 预告片 查看硅谷电影预告片 /n
+                回复 语音识别 查看语音识别电影 /n
+                回复 任意文本 搜索相关的电影 /n
+                回复 任意语音 搜索相关的电影 /n
+                也可以点击<a href="${url}/search">语音识别</a>来跳转`;
+
     } else if (mes.Event === 'unsubscribe') {
       //取消关注事件
       console.log('无情取关~');
-    } else if (mes.Event === 'LOCATION') {
+    }  else if (mes.Event === 'CLICK') {
       //用户初次访问公众号，会自动获取地理位置
-      replayDate = `纬度：${mes.Latitude} 经度：${mes.Longitude}`;
-    } else if (mes.Event === 'CLICK') {
-      //用户初次访问公众号，会自动获取地理位置
-      replayDate = `用户点击了：${mes.EventKey}`;
+      if(mes.EventKey === 'help'){
+        replayDate = `硅谷电影公众号~ /n
+                回复 预告片 查看硅谷电影预告片 /n
+                回复 语音识别 查看语音识别电影 /n
+                回复 任意文本 搜索相关的电影 /n
+                回复 任意语音 搜索相关的电影 /n
+                也可以点击<a href="${url}/search">语音识别</a>来跳转`;
+      }
+
     }
   }
   options.Content = replayDate;

@@ -349,52 +349,23 @@ class Wechat {
 
 
 //测试代码块
-/*(async () => {
-  /!*
-   读取本地保存access_token（readAccessToken）
+(async () => {
+
+  /* 读取本地保存access_token（readAccessToken）
    - 有
    - 判断是否过期（isValidAccessToken）
    - 过期了, 重新发送请求，获取access_token（getAccessToken），保存下来（覆盖之前的）(saveAccessToken)
    - 没有过期, 直接使用
    - 没有
-   - 发送请求，获取access_token，保存下来
-   *!/
+   - 发送请求，获取access_token，保存下来*/
+
   const w = new Wechat();
-  //上传图片获取media_id
-  //  let result1 = await w.uploadMaterial('image', './er.jpg');
-  //  console.log(result1);
-  //
-  //  //上传图片获取地址
-  //  let result2 = await w.uploadMaterial('pic', './tp.jpg');
-  //  console.log(result2);
-  //
-  //  //上传图文消息
-  //  let result3 = await w.uploadMaterial('news', {
-  //  "articles": [{
-  //    "title": '微信公众号开发',
-  //    "thumb_media_id": result1.media_id,
-  //    "author": '佚名',
-  //    "digest": '这里是class0810开发的',
-  //    "show_cover_pic": 1,
-  //    "content": `<!DOCTYPE html>
-  //                 <html lang="en">
-  //                 <head>
-  //                   <meta charset="UTF-8">
-  //                   <title>Title</title>
-  //                 </head>
-  //                 <body>
-  //                   <h1>微信公众号开发</h1>
-  //                   <img src="${result2.url}">
-  //                 </body>
-  //                 </html>`,
-  //    "content_source_url": 'http://www.atguigu.com',
-  //    "need_open_comment":1,
-  //    "only_fans_can_comment":1
-  //  }
-  //  ]
-  //  });
-  //  console.log(result3);
+  //删除菜单，再重新创建
+  let result = await w.deleteMenu();
+  console.log(result);
+  result = await w.createMenu(require('./menu'));
+  console.log(result);
 
 
-})();*/
+})();
 module.exports = Wechat;

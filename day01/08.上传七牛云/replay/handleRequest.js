@@ -70,7 +70,7 @@ module.exports = () => {
       const mes = formatMessage(jsDate);
       console.log(mes);
 
-      const options = replay(mes);
+      const options = await replay(mes);
       const replayMessage = replayMsg(options);
 
       res.send(replayMessage);
